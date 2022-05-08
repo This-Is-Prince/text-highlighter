@@ -3,16 +3,15 @@ import { AnnotationWindowProps } from "../type";
 
 const AnnotationWindow: React.FC<AnnotationWindowProps> = ({
   words,
-  highlightPerson,
-  highlightOrg,
+  highlightWord,
 }) => {
   return (
     <section className="annotation_window section">
       <header className="header">
-        <button className="btn" onClick={highlightPerson}>
+        <button className="btn" onClick={() => highlightWord("person")}>
           person
         </button>
-        <button className="btn" onClick={highlightOrg}>
+        <button className="btn" onClick={() => highlightWord("org")}>
           org
         </button>
       </header>

@@ -12,12 +12,11 @@ interface RecordsBarProps {
 interface Word {
   name: string;
   category: string;
-  id: number;
+  id: string | number;
 }
 
 interface AnnotationWindowProps {
-  highlightPerson: () => void;
-  highlightOrg: () => void;
+  highlightWord: (category: string) => void;
   words: Word[];
 }
 
