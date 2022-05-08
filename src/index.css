@@ -86,3 +86,17 @@ AnnotationWindow
   padding: 1rem;
   line-height: 2.5rem;
 }
+.category {
+  margin: 0 0.2rem;
+  line-height: 1rem;
+  display: inline-block;
+  border-radius: 0.1rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgb(247, 223, 179);
+}
+.category :last-child {
+  font-weight: 800;
+  font-size: 0.6rem;
+  color: var(--clr-blue);
+  text-transform: uppercase;
+}

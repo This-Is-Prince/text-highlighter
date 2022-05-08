@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { RecordsBarProps } from "../type";
 
-const RecordsBar: React.FC<RecordsBarProps> = ({ records, setRecord }) => {
+const RecordsBar: React.FC<RecordsBarProps> = ({
+  rawRecords,
+  setRawRecord,
+}) => {
   const [activeRecord, setActiveRecord] = useState(-1);
   return (
     <aside className="records_bar section">
@@ -9,19 +12,19 @@ const RecordsBar: React.FC<RecordsBarProps> = ({ records, setRecord }) => {
         <h3>Records</h3>
       </header>
       <ul className="records">
-        {records.map((record) => {
+        {rawRecords.map((rawRecord) => {
           return (
             <li
-              key={record.id}
+              key={rawRecord.id}
               onClick={() => {
-                setRecord(record);
-                setActiveRecord(record.id);
+                setRawRecord(rawRecord);
+                setActiveRecord(rawRecord.id);
               }}
-              className={`${
-                activeRecord === record.id ? "record active_record" : "record"
+              className={`record ${
+                activeRecord === rawRecord.id ? "active_record" : ""
               }`}
             >
-              {record.rawtext.substring(0, 30)} ...
+              {rawRecord.desc.substring(0, 30)} ...
             </li>
           );
         })}

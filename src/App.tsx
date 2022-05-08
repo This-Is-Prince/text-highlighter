@@ -3,27 +3,50 @@ import AnnotationList from "./components/AnnotationList";
 import AnnotationWindow from "./components/AnnotationWindow";
 import RecordsBar from "./components/RecordsBar";
 import data from "./data";
-import { Record } from "./type";
+import { RawRecord, Word } from "./type";
 
 function App() {
-  const [records, setRecords] = useState<Record[]>([]);
-  const [record, setRecord] = useState<Record>();
+  const [rawRecords, setRawRecords] = useState<RawRecord[]>([]);
+  const [rawRecord, setRawRecord] = useState<RawRecord>();
+
+  const [words, setWords] = useState<Word[]>([]);
+
+  const highlightPerson = () => {};
+  const highlightOrg = () => {};
 
   useEffect(() => {
     const localRecords = localStorage.getItem("records");
     if (localRecords === null) {
-      console.log("localRecords, is null");
       localStorage.setItem("records", JSON.stringify(data));
-      setRecords(data);
+      setRawRecords(data);
     } else {
-      setRecords(JSON.parse(localRecords));
+      setRawRecords(JSON.parse(localRecords));
     }
-    setRecord(records[0]);
   }, []);
+
+  useEffect(() => {
+    setWords(() => {
+      if (rawRecord !== undefined) {
+        return rawRecord.desc.split(" ").map((word, index) => {
+          if (index % 7 == 0) {
+            return { name: word, category: "person", id: index } as Word;
+          }
+          return { name: word, category: "", id: index } as Word;
+        });
+      } else {
+        return [];
+      }
+    });
+  }, [rawRecord]);
+
   return (
     <main className="main">
-      <RecordsBar records={records} setRecord={setRecord} />
-      <AnnotationWindow record={record} />
+      <RecordsBar rawRecords={rawRecords} setRawRecord={setRawRecord} />
+      <AnnotationWindow
+        highlightPerson={highlightPerson}
+        highlightOrg={highlightOrg}
+        words={words}
+      />
       <AnnotationList />
     </main>
   );

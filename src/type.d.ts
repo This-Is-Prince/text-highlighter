@@ -1,16 +1,24 @@
-interface Record {
+interface RawRecord {
   id: number;
-  rawtext: string;
-  highlightedText: { name: string; category: "person" | "org" }[];
+  desc: string;
+  highlightedWord: { name: string; category: "person" | "org" }[];
 }
 
 interface RecordsBarProps {
-  records: Record[];
-  setRecord: React.Dispatch<React.SetStateAction<Record | undefined>>;
+  rawRecords: RawRecord[];
+  setRawRecord: React.Dispatch<React.SetStateAction<RawRecord | undefined>>;
+}
+
+interface Word {
+  name: string;
+  category: string;
+  id: number;
 }
 
 interface AnnotationWindowProps {
-  record: Record | undefined;
+  highlightPerson: () => void;
+  highlightOrg: () => void;
+  words: Word[];
 }
 
-export { Record, RecordsBarProps, AnnotationWindowProps };
+export { Word, RawRecord, RecordsBarProps, AnnotationWindowProps };
