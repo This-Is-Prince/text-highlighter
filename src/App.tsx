@@ -3,37 +3,40 @@ import AnnotationList from "./components/AnnotationList";
 import AnnotationWindow from "./components/AnnotationWindow";
 import RecordsBar from "./components/RecordsBar";
 import data from "./data";
-import { RawRecord, Word } from "./type";
+import { HighlightedWord, RawRecord, Word } from "./type";
 import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const [rawRecords, setRawRecords] = useState<RawRecord[]>([]);
   const [rawRecord, setRawRecord] = useState<RawRecord>();
-
   const [words, setWords] = useState<Word[]>([]);
 
   const highlightWord = (category: string) => {
     if (rawRecord !== undefined) {
-      const { desc, highlightedWord } = rawRecord;
+      const { desc, highlightedWords } = rawRecord;
 
-      const persons: string[] = highlightedWord
+      const persons = highlightedWords
         .reduce((prevPerson, currPerson) => {
           if (currPerson.category === category) {
-            prevPerson.push(currPerson.name);
+            prevPerson.push(currPerson);
           }
           return prevPerson;
-        }, [] as string[])
+        }, [] as HighlightedWord[])
         .sort((a, b) => {
-          return b.length - a.length;
+          return b.name.length - a.name.length;
         });
 
       let output: Word[] = [];
+
       if (
         persons.some((person) => {
-          return person === desc;
+          if (person.name === desc) {
+            output.push({ name: person.name, category, id: uuidv4() });
+            return true;
+          }
+          return false;
         })
       ) {
-        output.push({ name: desc, category, id: uuidv4() });
         setWords(output);
         return;
       }
@@ -47,7 +50,8 @@ function App() {
           if (word.category !== "") {
             result.push(word);
           } else {
-            let index = word.name.indexOf(person);
+            let index = word.name.indexOf(person.name);
+
             if (index < 0) {
               result.push(word);
             } else {
@@ -56,13 +60,9 @@ function App() {
                 category: "",
                 id: uuidv4(),
               });
+              result.push({ name: person.name, category, id: uuidv4() });
               result.push({
-                name: person,
-                category,
-                id: word.id,
-              });
-              result.push({
-                name: word.name.substring(index + person.length),
+                name: word.name.substring(index + person.name.length),
                 category: "",
                 id: uuidv4(),
               });
@@ -73,6 +73,14 @@ function App() {
       });
       setWords(output);
     }
+  };
+
+  const deleteWord = (name: string) => {
+    setWords((prevWords) => {
+      return prevWords.filter((word) => {
+        return word.name !== name;
+      });
+    });
   };
 
   useEffect(() => {
@@ -88,8 +96,8 @@ function App() {
   useEffect(() => {
     setWords(() => {
       if (rawRecord !== undefined) {
-        return rawRecord.desc.split(" ").map((word, index) => {
-          return { name: word, category: "", id: index } as Word;
+        return rawRecord.desc.split(" ").map((word) => {
+          return { name: word, category: "", id: uuidv4() } as Word;
         });
       } else {
         return [];
@@ -101,7 +109,12 @@ function App() {
     <main className="main">
       <RecordsBar rawRecords={rawRecords} setRawRecord={setRawRecord} />
       <AnnotationWindow highlightWord={highlightWord} words={words} />
-      <AnnotationList />
+      <AnnotationList
+        highlightedWords={
+          rawRecord === undefined ? [] : rawRecord.highlightedWords
+        }
+        deleteWord={deleteWord}
+      />
     </main>
   );
 }

@@ -1,7 +1,12 @@
+interface HighlightedWord {
+  name: string;
+  category: string;
+}
+
 interface RawRecord {
   id: number;
   desc: string;
-  highlightedWord: { name: string; category: "person" | "org" }[];
+  highlightedWords: HighlightedWord[];
 }
 
 interface RecordsBarProps {
@@ -20,4 +25,16 @@ interface AnnotationWindowProps {
   words: Word[];
 }
 
-export { Word, RawRecord, RecordsBarProps, AnnotationWindowProps };
+interface AnnotationListProps {
+  highlightedWords: HighlightedWord[];
+  deleteWord: (name: string) => void;
+}
+
+export {
+  Word,
+  RawRecord,
+  RecordsBarProps,
+  AnnotationWindowProps,
+  AnnotationListProps,
+  HighlightedWord,
+};
