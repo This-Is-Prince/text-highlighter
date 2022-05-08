@@ -6,6 +6,10 @@ import data from "./data";
 import { HighlightedWord, RawRecord, Word } from "./type";
 import { v4 as uuidv4 } from "uuid";
 
+/* 
+Give any records with highlighted words and a raw string. 
+This app will highlight the given word in this string.
+*/
 function App() {
   const [rawRecords, setRawRecords] = useState<RawRecord[]>([]);
   const [rawRecord, setRawRecord] = useState<RawRecord>();
@@ -15,7 +19,7 @@ function App() {
     if (rawRecord !== undefined) {
       const { desc, highlightedWords } = rawRecord;
 
-      const persons = highlightedWords
+      const hWords = highlightedWords
         .reduce((prevPerson, currPerson) => {
           if (currPerson.category === category) {
             prevPerson.push(currPerson);
@@ -29,9 +33,9 @@ function App() {
       let output: Word[] = [];
 
       if (
-        persons.some((person) => {
-          if (person.name === desc) {
-            output.push({ name: person.name, category, id: uuidv4() });
+        hWords.some((currWord) => {
+          if (currWord.name === desc) {
+            output.push({ name: currWord.name, category, id: uuidv4() });
             return true;
           }
           return false;
@@ -43,14 +47,14 @@ function App() {
 
       output.push({ name: desc, category: "", id: uuidv4() });
 
-      persons.forEach((person) => {
+      hWords.forEach((currWord) => {
         let result: Word[] = [];
-
         output.forEach((word) => {
           if (word.category !== "") {
             result.push(word);
           } else {
-            let index = word.name.indexOf(person.name);
+            // Index of highlighted word
+            let index = word.name.indexOf(currWord.name);
 
             if (index < 0) {
               result.push(word);
@@ -60,9 +64,9 @@ function App() {
                 category: "",
                 id: uuidv4(),
               });
-              result.push({ name: person.name, category, id: uuidv4() });
+              result.push({ name: currWord.name, category, id: uuidv4() });
               result.push({
-                name: word.name.substring(index + person.name.length),
+                name: word.name.substring(index + currWord.name.length),
                 category: "",
                 id: uuidv4(),
               });
@@ -78,7 +82,7 @@ function App() {
   const deleteWord = (name: string) => {
     setWords((prevWords) => {
       return prevWords.filter((word) => {
-        return word.name !== name;
+        return word.name !== name || word.category === "";
       });
     });
   };

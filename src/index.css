@@ -100,3 +100,32 @@ AnnotationWindow
   color: var(--clr-blue);
   text-transform: uppercase;
 }
+
+/* 
+============
+AnnotationList
+============
+*/
+.highlighted_words {
+  row-gap: 2rem;
+  display: flex;
+  padding: 2rem;
+  list-style-type: none;
+  flex-direction: column;
+}
+.highlighted_words > li {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+}
+.word_category {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.delete_word {
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1rem;
+  font-size: 1.25rem;
+  background-color: transparent;
+}
