@@ -1,40 +1,35 @@
-interface HighlightedWord {
-  name: string;
-  category: string;
-}
-
 interface RawRecord {
   id: number;
   desc: string;
-  highlightedWords: HighlightedWord[];
 }
 
 interface RecordsBarProps {
   rawRecords: RawRecord[];
-  setRawRecord: React.Dispatch<React.SetStateAction<RawRecord | undefined>>;
+  setText: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface Word {
   name: string;
   category: string;
-  id: string | number;
+  id: string;
 }
 
 interface AnnotationWindowProps {
-  highlightWord: (category: string) => void;
-  words: Word[];
+  text: string;
+  category: string;
+  setCategory: React.Dispatch<React.SetStateAction<string>>;
+  setHighlightedWords: React.Dispatch<React.SetStateAction<Word[]>>;
 }
 
 interface AnnotationListProps {
-  highlightedWords: HighlightedWord[];
-  deleteWord: (name: string) => void;
+  highlightedWords: Word[] | undefined;
+  deleteWord: (id: string) => void;
 }
 
 export {
-  Word,
   RawRecord,
   RecordsBarProps,
   AnnotationWindowProps,
   AnnotationListProps,
-  HighlightedWord,
+  Word,
 };

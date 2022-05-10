@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { RecordsBarProps } from "../type";
 
-const RecordsBar: React.FC<RecordsBarProps> = ({
-  rawRecords,
-  setRawRecord,
-}) => {
+const RecordsBar: React.FC<RecordsBarProps> = ({ rawRecords, setText }) => {
   const [activeRecord, setActiveRecord] = useState(-1);
   return (
     <aside className="records_bar section">
@@ -17,7 +14,9 @@ const RecordsBar: React.FC<RecordsBarProps> = ({
             <li
               key={rawRecord.id}
               onClick={() => {
-                setRawRecord(rawRecord);
+                setText(() => {
+                  return rawRecord.desc;
+                });
                 setActiveRecord(rawRecord.id);
               }}
               className={`record ${

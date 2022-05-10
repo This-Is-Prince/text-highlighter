@@ -3,7 +3,7 @@ import AnnotationList from "./components/AnnotationList";
 import AnnotationWindow from "./components/AnnotationWindow";
 import RecordsBar from "./components/RecordsBar";
 import data from "./data";
-import { HighlightedWord, RawRecord, Word } from "./type";
+import { Word, RawRecord } from "./type";
 import { v4 as uuidv4 } from "uuid";
 
 /* 
@@ -11,78 +11,23 @@ Give any records with highlighted words and a raw string.
 This app will highlight the given word in this string.
 */
 function App() {
+  const [text, setText] = useState<string>("");
+  const [category, setCategory] = useState("person");
   const [rawRecords, setRawRecords] = useState<RawRecord[]>([]);
-  const [rawRecord, setRawRecord] = useState<RawRecord>();
-  const [words, setWords] = useState<Word[]>([]);
+  const [highlightedWords, setHighlightedWords] = useState<Word[]>([]);
 
-  const highlightWord = (category: string) => {
-    if (rawRecord !== undefined) {
-      const { desc, highlightedWords } = rawRecord;
-
-      const hWords = highlightedWords
-        .reduce((prevPerson, currPerson) => {
-          if (currPerson.category === category) {
-            prevPerson.push(currPerson);
-          }
-          return prevPerson;
-        }, [] as HighlightedWord[])
-        .sort((a, b) => {
-          return b.name.length - a.name.length;
-        });
-
-      let output: Word[] = [];
-
-      if (
-        hWords.some((currWord) => {
-          if (currWord.name === desc) {
-            output.push({ name: currWord.name, category, id: uuidv4() });
-            return true;
+  const deleteWord = (id: string) => {
+    setHighlightedWords((prevHighlightedWords) => {
+      return prevHighlightedWords.filter((word) => {
+        if (word.id === id) {
+          const elm = document.getElementById(id) as HTMLSpanElement;
+          if (elm !== null) {
+            elm.remove();
           }
           return false;
-        })
-      ) {
-        setWords(output);
-        return;
-      }
-
-      output.push({ name: desc, category: "", id: uuidv4() });
-
-      hWords.forEach((currWord) => {
-        let result: Word[] = [];
-        output.forEach((word) => {
-          if (word.category !== "") {
-            result.push(word);
-          } else {
-            // Index of highlighted word
-            let index = word.name.indexOf(currWord.name);
-
-            if (index < 0) {
-              result.push(word);
-            } else {
-              result.push({
-                name: word.name.substring(0, index),
-                category: "",
-                id: uuidv4(),
-              });
-              result.push({ name: currWord.name, category, id: uuidv4() });
-              result.push({
-                name: word.name.substring(index + currWord.name.length),
-                category: "",
-                id: uuidv4(),
-              });
-            }
-          }
-        });
-        output = result;
-      });
-      setWords(output);
-    }
-  };
-
-  const deleteWord = (name: string) => {
-    setWords((prevWords) => {
-      return prevWords.filter((word) => {
-        return word.name !== name || word.category === "";
+        } else {
+          return true;
+        }
       });
     });
   };
@@ -97,27 +42,18 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    setWords(() => {
-      if (rawRecord !== undefined) {
-        return rawRecord.desc.split(" ").map((word) => {
-          return { name: word, category: "", id: uuidv4() } as Word;
-        });
-      } else {
-        return [];
-      }
-    });
-  }, [rawRecord]);
-
   return (
     <main className="main">
-      <RecordsBar rawRecords={rawRecords} setRawRecord={setRawRecord} />
-      <AnnotationWindow highlightWord={highlightWord} words={words} />
+      <RecordsBar rawRecords={rawRecords} setText={setText} />
+      <AnnotationWindow
+        text={text}
+        category={category}
+        setCategory={setCategory}
+        setHighlightedWords={setHighlightedWords}
+      />
       <AnnotationList
-        highlightedWords={
-          rawRecord === undefined ? [] : rawRecord.highlightedWords
-        }
         deleteWord={deleteWord}
+        highlightedWords={highlightedWords}
       />
     </main>
   );
