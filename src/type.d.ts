@@ -1,0 +1,3 @@
+interface ITextHighlighterStore {}
+
+export { ITextHighlighterStore };
